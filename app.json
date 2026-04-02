@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "bitrunners-app",
-    "slug": "bitrunners-app",
+    "name": "BIT Runners",
+    "slug": "bitrunners",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,21 +10,46 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2563eb"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bitrunners.app",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "BIT Runners 앱이 러닝 기록을 동기화하기 위해 건강 데이터에 접근합니다."
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#2563eb"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.bitrunners.app",
+      "permissions": [
+        "android.permission.health.READ_EXERCISE",
+        "android.permission.health.READ_DISTANCE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-health-connect",
+        {
+          "requestPermissions": [
+            "android.permission.health.READ_EXERCISE",
+            "android.permission.health.READ_DISTANCE"
+          ]
+        }
+      ],
+      "react-native-health",
+      "expo-secure-store"
+    ]
   }
 }
