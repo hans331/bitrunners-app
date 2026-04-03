@@ -11,7 +11,13 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
-import { requestPermissions, syncRunsToSupabase } from '../lib/health';
+import { requestPermissions } from '../lib/health';
+import {
+  performSync,
+  registerBackgroundSync,
+  startForegroundAutoSync,
+  stopForegroundAutoSync,
+} from '../lib/backgroundSync';
 
 interface Member {
   id: string;
@@ -80,10 +86,25 @@ export default function HomeScreen({ member, onLogout }: Props) {
     }
   }, [member.id, year, month]);
 
+  // Initial load + register background sync + foreground auto-sync
   useEffect(() => {
     loadData();
+
+    // Register background sync task
+    registerBackgroundSync();
+
+    // Auto-sync when app comes to foreground
+    startForegroundAutoSync((count) => {
+      // Refresh UI after background/foreground sync
+      loadData();
+    });
+
+    return () => {
+      stopForegroundAutoSync();
+    };
   }, [loadData]);
 
+  // Manual sync (button)
   async function handleSync() {
     setSyncing(true);
     try {
@@ -94,10 +115,9 @@ export default function HomeScreen({ member, onLogout }: Props) {
         return;
       }
 
-      const count = await syncRunsToSupabase(member.id);
-      const timestamp = new Date().toLocaleString('ko-KR');
-      await AsyncStorage.setItem('lastSync', timestamp);
-      setLastSync(timestamp);
+      const count = await performSync();
+      const stored = await AsyncStorage.getItem('lastSync');
+      if (stored) setLastSync(stored);
 
       await loadData();
 
@@ -180,6 +200,7 @@ export default function HomeScreen({ member, onLogout }: Props) {
       {lastSync && (
         <Text style={styles.lastSyncText}>마지막 동기화: {lastSync}</Text>
       )}
+      <Text style={styles.autoSyncText}>자동 동기화 활성화됨</Text>
 
       {/* Recent runs heading */}
       <Text style={styles.sectionTitle}>최근 러닝 기록</Text>
@@ -376,6 +397,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#94a3b8',
     marginTop: 2,
+  },
+  autoSyncText: {
+    textAlign: 'center',
+    color: '#22c55e',
+    fontSize: 11,
+    marginTop: 4,
   },
   empty: {
     textAlign: 'center',
