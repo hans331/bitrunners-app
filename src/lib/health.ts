@@ -79,7 +79,7 @@ async function requestHealthConnectPermissions(): Promise<boolean> {
     const {
       initialize,
       requestPermission,
-    } = require('expo-health-connect');
+    } = require('react-native-health-connect');
 
     const initialized = await initialize();
     if (!initialized) return false;
@@ -98,7 +98,7 @@ async function requestHealthConnectPermissions(): Promise<boolean> {
 
 async function fetchHealthConnectRuns(sinceDaysAgo: number = 30): Promise<RunActivity[]> {
   try {
-    const { readRecords } = require('expo-health-connect');
+    const { readRecords } = require('react-native-health-connect');
 
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - sinceDaysAgo);

@@ -17,7 +17,10 @@
       "bundleIdentifier": "com.bitrunners.app",
       "infoPlist": {
         "NSHealthShareUsageDescription": "BIT Runners 앱이 러닝 기록을 동기화하기 위해 건강 데이터에 접근합니다.",
-        "UIBackgroundModes": ["fetch", "processing"]
+        "UIBackgroundModes": [
+          "fetch",
+          "processing"
+        ]
       },
       "entitlements": {
         "com.apple.developer.healthkit": true,
@@ -34,12 +37,24 @@
       "permissions": [
         "android.permission.health.READ_EXERCISE",
         "android.permission.health.READ_DISTANCE"
+      ],
+      "blockedPermissions": [
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.READ_TOTAL_CALORIES_BURNED"
       ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
       [
         "expo-health-connect",
         {
@@ -51,6 +66,12 @@
       ],
       "react-native-health",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c1f31e20-7028-4979-a54e-d4011e2b5df7"
+      }
+    },
+    "owner": "hans_bit"
   }
 }
